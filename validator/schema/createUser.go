@@ -1,0 +1,14 @@
+package schema
+
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// CreateUserSchema model
+type CreateUserSchema struct {
+	ID        primitive.ObjectID `validate:"-"`
+	FirstName string             `validate:"required"`
+	LastName  string             `validate:"required"`
+	Email     string             `validate:"required,email"`
+	Password  string             `validate:"required,min=8"`
+}

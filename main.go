@@ -9,6 +9,7 @@ import (
 	"goapi/db"
 	"goapi/middlewares"
 	"goapi/routes"
+	"goapi/validator"
 )
 
 func test(w http.ResponseWriter, r *http.Request) {
@@ -18,8 +19,15 @@ func main() {
 	fmt.Println("Hello W")
 	db.Connect()
 	router := mux.NewRouter()
+	validator.Init()
 	routes.RegisterUserRoutes(router)
-	urlUpdated := middlewares.RemoveTrailingSlashes(router)
+	errorsHandled := middlewares.Recovery(router)
+	urlUpdated := middlewares.RemoveTrailingSlashes(errorsHandled)
 	headersAdded := middlewares.SetHeaders(urlUpdated)
 	http.ListenAndServe(":8000", headersAdded)
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		fmt.Println("Inside Recover..")
+	// 	}
+	// }()
 }
